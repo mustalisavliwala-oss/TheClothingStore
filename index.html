@@ -13,11 +13,11 @@
             theme: {
                 extend: {
                     colors: {
-                        luxuryDark: '#121110',
-                        luxuryBronze: '#1d1917',
-                        goldPrimary: '#d4af37',
-                        goldLight: '#f3e5ab',
-                        goldDark: '#997a15',
+                        obsidian: '#050505',
+                        surfaceDark: '#0a0a0a',
+                        goldPrimary: '#dfb768',
+                        goldLight: '#f7e8c4',
+                        goldDark: '#9e7b2b',
                     },
                     fontFamily: {
                         serif: ['Cinzel', 'Garamond', 'serif'],
@@ -37,34 +37,33 @@
 
     <style>
         body {
-            background-color: #121110;
-            color: #f3e5ab;
+            background-color: #050505;
+            color: #f7e8c4;
             font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
         }
         h1, h2, h3, .font-cinzel {
             font-family: 'Cinzel', serif;
         }
-        /* Custom smooth scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
-            background: #121110;
+            background: #050505;
         }
         ::-webkit-scrollbar-thumb {
-            background: #997a15;
-            border-radius: 3px;
+            background: #9e7b2b;
+            border-radius: 2px;
         }
     </style>
 </head>
-<body class="bg-luxuryDark text-goldLight antialiased selection:bg-goldPrimary selection:text-black">
+<body class="bg-obsidian text-goldLight antialiased selection:bg-goldPrimary selection:text-black">
 
-    <!-- Cinematic Intro Overlay / Curtain -->
-    <div id="intro-overlay" class="fixed inset-0 z-50 bg-[#0a0908] flex flex-col items-center justify-center transition-opacity duration-1000">
+    <!-- Cinematic Intro Overlay -->
+    <div id="intro-overlay" class="fixed inset-0 z-50 bg-[#020202] flex flex-col items-center justify-center transition-opacity duration-1000">
         <div class="text-center opacity-0" id="intro-text">
-            <span class="tracking-[0.3em] text-xs uppercase text-goldDark block mb-2">Atelier Presentation</span>
-            <h2 class="text-3xl md:text-5xl font-cinzel text-goldPrimary tracking-widest">T H E  C L O T H I N G  S T O R E</h2>
+            <span class="tracking-[0.4em] text-xs uppercase text-goldDark block mb-3">The House of Atelier</span>
+            <h2 class="text-3xl md:text-5xl font-cinzel text-goldPrimary tracking-widest">T H E &nbsp; C L O T H I N G &nbsp; S T O R E</h2>
         </div>
     </div>
 
@@ -73,38 +72,38 @@
 
         <!-- Header / Navigation -->
         <header class="flex justify-between items-center opacity-0" id="nav-header">
-            <div class="font-cinzel text-lg md:text-xl tracking-[0.2em] font-bold text-goldPrimary">
+            <div class="font-cinzel text-lg md:text-xl tracking-[0.25em] font-bold text-goldPrimary">
                 T C S
             </div>
-            <nav class="hidden md:flex space-x-8 text-sm tracking-[0.2em] uppercase">
+            <nav class="hidden md:flex space-x-10 text-xs tracking-[0.25em] uppercase text-goldLight/80">
                 <a href="#collection" class="hover:text-goldPrimary transition-colors duration-300">Collection</a>
                 <a href="#atelier" class="hover:text-goldPrimary transition-colors duration-300">The Atelier</a>
                 <a href="#heritage" class="hover:text-goldPrimary transition-colors duration-300">Heritage</a>
             </nav>
             <div>
-                <a href="#shop" class="text-xs md:text-sm tracking-[0.2em] uppercase border border-goldPrimary/40 px-5 py-2.5 rounded-full hover:bg-goldPrimary hover:text-black transition-all duration-500">
+                <a href="#cart" class="text-xs tracking-[0.2em] uppercase border border-goldPrimary/30 px-5 py-2.5 rounded-full hover:bg-goldPrimary hover:text-black hover:border-goldPrimary transition-all duration-500">
                     Cart (0)
                 </a>
             </div>
         </header>
 
-        <!-- Center Stage: 3D Canvas Appears Here -->
+        <!-- Center Stage: 3D Canvas Background Appears Here -->
         <div id="canvas-container" class="absolute inset-0 pointer-events-none z-0"></div>
 
-        <!-- Hero Content (Overlay on top of 3D Canvas) -->
-        <div class="my-auto text-center z-20 pointer-events-auto mt-32 md:mt-40">
+        <!-- Hero Content Overlay -->
+        <div class="my-auto text-center z-20 pointer-events-auto mt-20">
             <div class="opacity-0 translate-y-8" id="hero-content">
-                <span class="text-xs md:text-sm tracking-[0.4em] uppercase text-goldDark font-medium block mb-3">Luxury Ready-To-Wear</span>
-                <h1 class="text-4xl md:text-7xl font-cinzel tracking-widest text-goldPrimary mb-6 drop-shadow-lg">
+                <span class="text-xs md:text-sm tracking-[0.4em] uppercase text-goldDark font-medium block mb-4">Autumn / Winter Ready-To-Wear</span>
+                <h1 class="text-4xl md:text-7xl font-cinzel tracking-widest text-goldPrimary mb-6 drop-shadow-2xl">
                     T H E &nbsp; C L O T H I N G &nbsp; S T O R E
                 </h1>
-                <p class="max-w-md mx-auto text-sm md:text-base text-goldLight/70 font-light tracking-wide mb-8">
-                    Crafted with precision. Defined by timeless elegance and uncompromising distinction.
+                <p class="max-w-md mx-auto text-sm md:text-base text-goldLight/60 font-light tracking-wide mb-10 leading-relaxed">
+                    Designed for absolute distinction. Uncompromising silhouettes crafted for the modern icon.
                 </p>
                 <div class="flex justify-center items-center">
-                    <a href="#explore" class="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-goldDark via-goldPrimary to-goldDark text-black font-semibold text-xs md:text-sm tracking-[0.25em] uppercase rounded-full overflow-hidden shadow-2xl hover:scale-105 transition-transform duration-300">
+                    <a href="#explore" class="group relative inline-flex items-center gap-3 px-9 py-4 bg-gradient-to-r from-goldDark via-goldPrimary to-goldDark text-black font-semibold text-xs md:text-sm tracking-[0.3em] uppercase rounded-full overflow-hidden shadow-[0_0_30px_rgba(223,183,104,0.2)] hover:scale-105 transition-all duration-300">
                         <span>Explore Collection</span>
-                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
                     </a>
@@ -113,9 +112,9 @@
         </div>
 
         <!-- Footer Info -->
-        <footer class="flex flex-col md:flex-row justify-between items-center text-xs tracking-[0.15em] text-goldLight/50 opacity-0" id="footer-info">
+        <footer class="flex flex-col md:flex-row justify-between items-center text-xs tracking-[0.2em] text-goldLight/40 opacity-0" id="footer-info">
             <p>© 2026 The Clothing Store. All Rights Reserved.</p>
-            <div class="flex space-x-6 mt-4 md:mt-0">
+            <div class="flex space-x-8 mt-4 md:mt-0">
                 <a href="#" class="hover:text-goldPrimary transition-colors">Instagram</a>
                 <a href="#" class="hover:text-goldPrimary transition-colors">Concierge</a>
                 <a href="#" class="hover:text-goldPrimary transition-colors">Privacy</a>
@@ -124,9 +123,8 @@
 
     </div>
 
-    <!-- Three.js Interactive 3D Gold Lighting & Particle Script -->
+    <!-- Three.js Cinematic Obsidian & Gold Particle Script -->
     <script>
-        // Setup Three.js Scene mimicking a luxury metallic ambient environment
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         
@@ -138,28 +136,27 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Add subtle floating gold dust particles to give it a cinematic atmosphere
-        const particlesCount = 300;
+        // High-end cinematic floating gold dust particles against pure black void
+        const particlesCount = 400;
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(particlesCount * 3);
 
         for(let i = 0; i < particlesCount * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 10;
+            positions[i] = (Math.random() - 0.5) * 12;
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         
         const material = new THREE.PointsMaterial({
-            size: 0.015,
-            color: 0xd4af37,
+            size: 0.012,
+            color: 0xdfb768,
             transparent: true,
-            opacity: 0.6
+            opacity: 0.7
         });
 
         const particles = new THREE.Points(geometry, material);
         scene.add(particles);
 
-        // Mouse movement interactive parallax lighting
         let mouseX = 0;
         let mouseY = 0;
         window.addEventListener('mousemove', (e) => {
@@ -167,39 +164,37 @@
             mouseY = (e.clientY / window.innerHeight) - 0.5;
         });
 
-        // Window resize handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Animation loop
         const clock = new THREE.Clock();
         function animate() {
             requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
-            particles.rotation.y = elapsedTime * 0.05;
+            particles.rotation.y = elapsedTime * 0.03;
+            particles.rotation.x = elapsedTime * 0.01;
             
-            // Subtle camera sway based on mouse position
-            camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
+            camera.position.x += (mouseX * 0.4 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 0.4 - camera.position.y) * 0.05;
             camera.lookAt(scene.position);
 
             renderer.render(scene, camera);
         }
         animate();
 
-        // GSAP Cinematic Entrance Timeline
+        // GSAP Cinematic Entrance
         window.addEventListener('load', () => {
             const tl = gsap.timeline();
 
             tl.to('#intro-text', { opacity: 1, duration: 1.2, ease: 'power2.out' })
-              .to('#intro-text', { opacity: 0, duration: 0.8, delay: 0.6, ease: 'power2.in' })
+              .to('#intro-text', { opacity: 0, duration: 0.8, delay: 0.5, ease: 'power2.in' })
               .to('#intro-overlay', { opacity: 0, pointerEvents: 'none', duration: 1 })
               .to('#nav-header', { opacity: 1, duration: 1, ease: 'power2.out' }, "-=0.5")
-              .to('#hero-content', { opacity: 1, y: 0, duration: 1.5, ease: 'power3.out' }, "-=0.7")
+              .to('#hero-content', { opacity: 1, y: 0, duration: 1.4, ease: 'power3.out' }, "-=0.7")
               .to('#footer-info', { opacity: 1, duration: 1, ease: 'power2.out' }, "-=1");
         });
     </script>
