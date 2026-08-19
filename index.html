@@ -1,303 +1,885 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE CLOTHING STORE | Cinematic Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #050505;
-            --text: #f0f0f0;
-            --gold: #d4af37;
-            --font-heading: 'Cinzel', serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-        }
+  <title>THE CLOTHING STORE — NOCTURNE</title>
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            height: 300vh; /* Scroll space for cinematic camera journey */
-        }
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        /* Custom Luxury Cursor */
-        .cursor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background 0.3s;
-            z-index: 9999;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: "#080808",
+            charcoal: "#0d0d0d",
+            silver: "#bdbdbd",
+            electric: "#d8ff00"
+          },
+          fontFamily: {
+            sans: ["Inter", "Arial", "sans-serif"],
+            display: ["Arial", "Helvetica", "sans-serif"]
+          }
         }
+      }
+    }
+  </script>
 
-        /* Canvas Wrapper for 3D Scene */
-        #webgl-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        /* UI Overlays */
-        .overlay-layer {
-            position: relative;
-            z-index: 10;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 40px 60px;
-            pointer-events: none;
-        }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            opacity: 0;
-            animation: fadeIn 1.5s ease 2.5s forwards;
-        }
+    body {
+      margin: 0;
+      background: #080808;
+      color: #f4f4f4;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
 
-        .brand-title {
-            font-family: var(--font-heading);
-            font-size: 1.1rem;
-            letter-spacing: 4px;
-            font-weight: 600;
-        }
+    ::selection {
+      background: #d8ff00;
+      color: #000;
+    }
 
-        .explore-hint {
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #888;
-            animation: pulse 2s infinite;
-        }
+    /* --------------------------------
+       NOISE
+    -------------------------------- */
 
-        /* Hero Content Sequence */
-        .hero-content {
-            position: absolute;
-            bottom: 80px;
-            left: 60px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: .035;
+      background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+    }
 
-        .hero-content.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
+    /* --------------------------------
+       NAV
+    -------------------------------- */
 
-        .hero-content h1 {
-            font-family: var(--font-heading);
-            font-size: clamp(2.5rem, 4vw, 4.5rem);
-            letter-spacing: 3px;
-            margin-bottom: 15px;
-            font-weight: 400;
-        }
+    .nav {
+      transition:
+        background .4s ease,
+        border .4s ease,
+        padding .4s ease,
+        backdrop-filter .4s ease;
+    }
 
-        .hero-content p {
-            color: #999;
-            max-width: 450px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
+    .nav.scrolled {
+      background: rgba(8, 8, 8, .78);
+      backdrop-filter: blur(22px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
 
-        .cta-btn {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 14px 36px;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: auto;
-        }
+    .nav-link {
+      position: relative;
+      color: rgba(255,255,255,.58);
+      transition: color .3s ease;
+    }
 
-        .cta-btn:hover {
-            background: var(--text);
-            color: var(--bg);
-            border-color: var(--text);
-        }
+    .nav-link:hover {
+      color: white;
+    }
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -7px;
+      width: 0;
+      height: 1px;
+      background: #d8ff00;
+      transition: width .3s ease;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-    </style>
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* --------------------------------
+       HERO
+    -------------------------------- */
+
+    .hero {
+      min-height: 100svh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(255,255,255,.09),
+        rgba(255,255,255,0) 68%
+      );
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      opacity: .06;
+      background-image:
+        linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(to bottom, black, transparent);
+    }
+
+    .hero-title {
+      font-size: clamp(4rem, 11vw, 11rem);
+      line-height: .8;
+      letter-spacing: -.075em;
+      font-weight: 800;
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-title .outline {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,.55);
+    }
+
+    /* --------------------------------
+       PRODUCT STAGE
+    -------------------------------- */
+
+    .product-stage {
+      position: relative;
+      perspective: 1400px;
+    }
+
+    .product-card {
+      position: relative;
+      width: min(500px, 80vw);
+      height: min(650px, 100vw);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 4px;
+      background:
+        radial-gradient(circle at 50% 25%, rgba(255,255,255,.11), transparent 32%),
+        linear-gradient(145deg, #1b1b1b, #080808);
+      box-shadow:
+        0 50px 100px rgba(0,0,0,.7),
+        inset 0 0 70px rgba(255,255,255,.025);
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: "";
+      position: absolute;
+      inset: 15px;
+      border: 1px solid rgba(255,255,255,.07);
+      pointer-events: none;
+    }
+
+    .product-number {
+      position: absolute;
+      top: 28px;
+      left: 30px;
+      font-size: 10px;
+      letter-spacing: .25em;
+      color: rgba(255,255,255,.45);
+    }
+
+    .hoodie {
+      position: absolute;
+      width: 72%;
+      height: 72%;
+      left: 14%;
+      top: 13%;
+      filter:
+        drop-shadow(0 35px 30px rgba(0,0,0,.7))
+        drop-shadow(0 0 30px rgba(255,255,255,.05));
+      transform: translateZ(70px);
+    }
+
+    .hoodie-body {
+      position: absolute;
+      inset: 16% 7% 3%;
+      background:
+        linear-gradient(
+          105deg,
+          #111 0%,
+          #292929 18%,
+          #101010 48%,
+          #2b2b2b 75%,
+          #0a0a0a 100%
+        );
+      clip-path: polygon(
+        23% 0,
+        77% 0,
+        88% 14%,
+        100% 26%,
+        93% 100%,
+        7% 100%,
+        0 26%,
+        12% 14%
+      );
+      border-radius: 15px;
+    }
+
+    .hoodie-body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0,
+          transparent 4px,
+          rgba(255,255,255,.015) 5px
+        );
+      opacity: .6;
+    }
+
+    .hood {
+      position: absolute;
+      width: 38%;
+      height: 27%;
+      left: 31%;
+      top: 3%;
+      background:
+        radial-gradient(
+          ellipse at center,
+          #333,
+          #111 72%
+        );
+      border-radius: 48% 48% 42% 42%;
+      border: 3px solid #191919;
+      box-shadow:
+        inset 0 -15px 25px rgba(0,0,0,.7);
+    }
+
+    .hood-opening {
+      position: absolute;
+      width: 48%;
+      height: 58%;
+      left: 26%;
+      top: 24%;
+      border-radius: 50%;
+      background: #050505;
+      border: 2px solid rgba(255,255,255,.05);
+    }
+
+    .pocket {
+      position: absolute;
+      width: 45%;
+      height: 13%;
+      left: 27.5%;
+      bottom: 19%;
+      border: 2px solid rgba(255,255,255,.06);
+      border-radius: 5px;
+      background: rgba(0,0,0,.12);
+    }
+
+    .sleeve {
+      position: absolute;
+      width: 27%;
+      height: 53%;
+      background: #161616;
+      top: 22%;
+      z-index: -1;
+    }
+
+    .sleeve.left {
+      left: -3%;
+      transform: rotate(18deg);
+      clip-path: polygon(45% 0,100% 12%,72% 100%,0 82%);
+    }
+
+    .sleeve.right {
+      right: -3%;
+      transform: rotate(-18deg);
+      clip-path: polygon(0 12%,55% 0,100% 82%,28% 100%);
+    }
+
+    .hoodie-label {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      right: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      transform: translateZ(45px);
+    }
+
+    .price {
+      font-size: 18px;
+      letter-spacing: .08em;
+    }
+
+    .badge {
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      border: 1px solid rgba(216,255,0,.45);
+      color: #d8ff00;
+      padding: 7px 10px;
+      font-size: 8px;
+      letter-spacing: .18em;
+    }
+
+    /* --------------------------------
+       BUTTONS
+    -------------------------------- */
+
+    .luxury-btn {
+      position: relative;
+      overflow: hidden;
+      background: white;
+      color: black;
+      transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .luxury-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #d8ff00;
+      transform: translateX(-101%);
+      transition: transform .35s cubic-bezier(.7,0,.2,1);
+    }
+
+    .luxury-btn:hover::before {
+      transform: translateX(0);
+    }
+
+    .luxury-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(216,255,0,.12);
+    }
+
+    .luxury-btn span {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* --------------------------------
+       TEARDOWN
+    -------------------------------- */
+
+    .teardown {
+      position: relative;
+    }
+
+    .teardown-sticky {
+      position: sticky;
+      top: 0;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+    }
+
+    .feature {
+      opacity: .18;
+      transform: translateY(30px);
+      transition:
+        opacity .7s ease,
+        transform .7s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .feature.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-line {
+      width: 0;
+      height: 1px;
+      background: #d8ff00;
+      transition: width .8s ease;
+    }
+
+    .feature.active .feature-line {
+      width: 70px;
+    }
+
+    .spec-number {
+      font-family: monospace;
+      color: #d8ff00;
+      font-size: 11px;
+      letter-spacing: .15em;
+    }
+
+    .spec-title {
+      font-size: clamp(2.2rem, 5vw, 5rem);
+      line-height: .95;
+      letter-spacing: -.055em;
+    }
+
+    /* --------------------------------
+       SCROLL REVEALS
+    -------------------------------- */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition:
+        opacity .9s ease,
+        transform .9s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --------------------------------
+       MARQUEE
+    -------------------------------- */
+
+    .marquee {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 25s linear infinite;
+    }
+
+    @keyframes marquee {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* --------------------------------
+       LOOKBOOK
+    -------------------------------- */
+
+    .look-card {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      min-height: 520px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .look-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.13),
+          transparent 35%,
+          rgba(255,255,255,.03)
+        );
+      transition: transform .7s ease;
+    }
+
+    .look-card:hover::before {
+      transform: scale(1.12);
+    }
+
+    .look-one {
+      background:
+        radial-gradient(circle at 50% 30%, #373737, transparent 25%),
+        linear-gradient(145deg, #161616, #050505);
+    }
+
+    .look-two {
+      background:
+        radial-gradient(circle at 70% 35%, #454545, transparent 23%),
+        linear-gradient(135deg, #111, #020202);
+    }
+
+    .look-three {
+      background:
+        radial-gradient(circle at 30% 60%, #303030, transparent 25%),
+        linear-gradient(135deg, #191919, #040404);
+    }
+
+    /* --------------------------------
+       CART TOAST
+    -------------------------------- */
+
+    .cart-toast {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      z-index: 1000;
+      transform: translateY(130%);
+      opacity: 0;
+      transition:
+        transform .5s cubic-bezier(.2,.8,.2,1),
+        opacity .4s ease;
+    }
+
+    .cart-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* --------------------------------
+       RESPONSIVE
+    -------------------------------- */
+
+    @media (max-width: 768px) {
+
+      .hero {
+        padding-top: 100px;
+      }
+
+      .hero-title {
+        font-size: clamp(4rem, 18vw, 7rem);
+      }
+
+      .product-card {
+        width: 85vw;
+        height: 110vw;
+        max-height: 600px;
+      }
+
+      .teardown-sticky {
+        position: relative;
+        min-height: auto;
+        padding: 100px 0;
+      }
+
+      .feature {
+        opacity: .3;
+        margin-bottom: 80px;
+      }
+
+      .feature.active {
+        opacity: 1;
+      }
+
+      .look-card {
+        min-height: 400px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <div class="cursor" id="cursor"></div>
-    <div id="webgl-container"></div>
+  <!-- ==========================================
+       NAVIGATION
+  =========================================== -->
 
-    <div class="overlay-layer">
-        <header>
-            <div class="brand-title">T S C</div>
-            <div class="explore-hint">Scroll to Explore Collection</div>
-        </header>
+  <header
+    id="navbar"
+    class="nav fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6"
+  >
+    <div class="max-w-[1500px] mx-auto flex items-center justify-between">
 
-        <div class="hero-content" id="heroText">
-            <h1>THE CLOTHING STORE</h1>
-            <p>Architectural streetwear engineered with meticulous precision and absolute exclusivity.</p>
-            <button class="cta-btn" onclick="alert('Entering Private Vault...')">Acquire Pieces</button>
+      <a href="#home" class="flex items-center gap-4">
+        <img
+          src="logo.png"
+          alt="The Clothing Store"
+          class="w-12 h-12 object-contain"
+        />
+
+        <div class="hidden sm:block">
+          <div class="text-[11px] tracking-[.28em] font-semibold">
+            THE CLOTHING STORE
+          </div>
+
+          <div class="text-[8px] tracking-[.35em] text-white/35 mt-1">
+            EST. 2026
+          </div>
         </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[.22em]">
+        <a class="nav-link" href="#shop">Shop</a>
+        <a class="nav-link" href="#lookbook">Lookbook</a>
+        <a class="nav-link" href="#story">Story</a>
+        <a class="nav-link" href="#archive">Archive</a>
+      </nav>
+
+      <button
+        id="cartButton"
+        class="relative w-11 h-11 border border-white/15 flex items-center justify-center hover:border-white/50 transition"
+      >
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path d="M6 8h12l1 13H5L6 8Z"/>
+          <path d="M9 8a3 3 0 0 1 6 0"/>
+        </svg>
+
+        <span
+          id="cartCount"
+          class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-[#d8ff00] text-black text-[9px] font-bold flex items-center justify-center"
+        >
+          0
+        </span>
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- ==========================================
+       HERO
+  =========================================== -->
+
+  <main id="home">
+
+    <section class="hero px-6 md:px-12">
+
+      <div class="hero-grid"></div>
+
+      <div
+        id="heroGlow"
+        class="hero-glow"
+        style="left:45%; top:18%;"
+      ></div>
+
+      <div class="max-w-[1500px] mx-auto w-full grid lg:grid-cols-2 gap-14 items-center">
+
+        <div class="relative z-10">
+
+          <div class="flex items-center gap-3 mb-8">
+            <div class="w-10 h-px bg-[#d8ff00]"></div>
+
+            <span class="text-[9px] uppercase tracking-[.35em] text-white/45">
+              Collection 01 / Nocturne
+            </span>
+          </div>
+
+          <h1 class="hero-title">
+            <span>BUILT</span>
+            <span class="outline">AFTER</span>
+            <span>DARK.</span>
+          </h1>
+
+          <p class="mt-9 max-w-md text-sm md:text-base leading-7 text-white/45">
+            Engineered streetwear for those who move differently.
+            Heavyweight construction. Distinct silhouettes.
+            Designed without compromise.
+          </p>
+
+          <div class="flex flex-wrap gap-4 mt-9">
+
+            <a
+              href="#shop"
+              class="luxury-btn px-8 py-4 text-[10px] tracking-[.25em] uppercase font-bold"
+            >
+              <span>Explore Collection</span>
+            </a>
+
+            <a
+              href="#teardown"
+              class="px-8 py-4 border border-white/15 text-[10px] tracking-[.25em] uppercase hover:border-white/50 transition"
+            >
+              Discover the Build
+            </a>
+
+          </div>
+
+          <div class="flex items-center gap-8 mt-14 text-[9px] tracking-[.2em] uppercase text-white/30">
+            <span>01 — 04</span>
+            <span>Limited Release</span>
+            <span>Worldwide</span>
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT -->
+
+        <div
+          id="shop"
+          class="product-stage flex justify-center lg:justify-end"
+        >
+
+          <div
+            id="productCard"
+            class="product-card"
+          >
+
+            <div class="product-number">
+              TCS / NCTRN / 001
+            </div>
+
+            <div class="badge">
+              LIMITED
+            </div>
+
+            <div class="hoodie">
+
+              <div class="hoodie-body"></div>
+
+              <div class="hood"></div>
+
+              <div class="hood-opening"></div>
+
+              <div class="sleeve left"></div>
+              <div class="sleeve right"></div>
+
+              <div class="pocket"></div>
+
+            </div>
+
+            <div class="hoodie-label">
+
+              <div>
+                <div class="text-[9px] tracking-[.28em] text-white/35 uppercase">
+                  Nocturne Series
+                </div>
+
+                <div class="text-xl tracking-tight mt-2">
+                  THE VOID
+                </div>
+              </div>
+
+              <div class="price">
+                ₹4,990
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         MARQUEE
+    =========================================== -->
+
+    <div class="marquee py-5">
+
+      <div class="marquee-track text-[10px] uppercase tracking-[.4em] text-white/35">
+
+        <span class="mx-10">
+          Heavyweight / Engineered / Limited / Nocturne /
+        </span>
+
+        <span class="mx-10">
+          Heavyweight / Engineered / Limited / Nocturne /
+        </span>
+
+        <span class="mx-10">
+          Heavyweight / Engineered / Limited / Nocturne /
+        </span>
+
+        <span class="mx-10">
+          Heavyweight / Engineered / Limited / Nocturne /
+        </span>
+
+      </div>
+
     </div>
 
-    {/* Load Three.js & GSAP via CDN for 3D Graphics and Cinematic Motion */}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-    <script>
-        // Custom Smooth Cursor
-        const cursor = document.getElementById('cursor');
-        window.addEventListener('mousemove', (e) => {
-            cursor.style.left = `${e.clientX}px`;
-            cursor.style.top = `${e.clientY}px`;
-        });
+    <!-- ==========================================
+         PRODUCT TEARDOWN
+    =========================================== -->
 
-        // --- Three.js Cinematic Scene Setup ---
-        const container = document.getElementById('webgl-container');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050505, 0.05);
+    <section
+      id="teardown"
+      class="teardown"
+      style="height: 430vh;"
+    >
 
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 0, 12);
+      <div class="teardown-sticky px-6 md:px-12">
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        container.appendChild(renderer.domElement);
+        <div class="max-w-[1500px] mx-auto w-full grid lg:grid-cols-2 gap-20 items-center">
 
-        // Cinematic Studio Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
+          <!-- LEFT VISUAL -->
 
-        const keyLight = new THREE.SpotLight(0xffffff, 50);
-        keyLight.position.set(5, 8, 5);
-        scene.add(keyLight);
+          <div class="hidden lg:flex justify-center">
 
-        const rimLight = new THREE.PointLight(0xd4af37, 20, 10);
-        rimLight.position.set(-4, -2, -2);
-        scene.add(rimLight);
+            <div class="relative w-[440px] h-[550px]">
 
-        // --- Create High-End 3D Monogram (Simulating your T-S-C Logo in 3D) ---
-        const group = new THREE.Group();
-        
-        // Material: Dark Brushed Metallic Obsidian
-        const logoMaterial = new THREE.MeshStandardMaterial({
-            color: 0x1a1a1a,
-            metalness: 0.95,
-            roughness: 0.25,
-            wireframe: false
-        });
+              <div
+                class="absolute inset-0 border border-white/10"
+              ></div>
 
-        // Central Pillar representing 'T'
-        const tGeo = new THREE.BoxGeometry(0.8, 3.5, 0.3);
-        const tMesh = new THREE.Mesh(tGeo, logoMaterial);
-        tMesh.position.set(0, 0, 0);
-        group.add(tMesh);
+              <div
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[400px] border border-white/10"
+              ></div>
 
-        // Top Bar of 'T'
-        const tTopGeo = new THREE.BoxGeometry(3.2, 0.6, 0.3);
-        const tTopMesh = new THREE.Mesh(tTopGeo, logoMaterial);
-        tTopMesh.position.set(0, 1.6, 0);
-        group.add(tTopMesh);
+              <div
+                id="teardownGarment"
+                class="absolute inset-0 flex items-center justify-center transition-all duration-700"
+              >
 
-        // Curved structure simulation for 'C' and 'S'
-        const ringGeo = new THREE.TorusGeometry(1.8, 0.22, 30, 100, Math.PI * 1.3);
-        const ringMesh = new THREE.Mesh(ringGeo, logoMaterial);
-        ringMesh.position.set(-0.2, -0.2, -0.2);
-        ringMesh.rotation.z = Math.PI * 0.4;
-        group.add(ringMesh);
+                <div class="relative w-[270px] h-[350px]">
 
-        scene.add(group);
+                  <div
+                    class="absolute inset-[12%_7%_3%] bg-gradient-to-br from-[#343434] via-[#111] to-[#222]"
+                    style="clip-path: polygon(23% 0,77% 0,88% 14%,100% 26%,93% 100%,7% 100%,0 26%,12% 14%);"
+                  ></div>
 
-        // --- Cinematic Animation Sequence (The 100 Million Dollar Reveal) ---
-        // Initial setup: Deep zoom out & rotated off-axis
-        group.scale.set(0, 0, 0);
-        group.rotation.x = -Math.PI;
-        group.rotation.y = Math.PI * 2;
+                  <div
+                    class="absolute w-[38%] h-[25%] left-[31%] top-[3%] rounded-[48%] bg-gradient-to-b from-[#333] to-[#111]"
+                  ></div>
 
-        // Sequence Timeline using GSAP
-        const tl = gsap.timeline();
+                  <div
+                    class="absolute w-[45%] h-[13%] left-[27.5%] bottom-[19%] border-2 border-white/10 rounded"
+                  ></div>
 
-        // Step 1: Dramatic Materialization & Rotation Reveal
-        tl.to(group.scale, { x: 1, y: 1, z: 1, duration: 2.2, ease: "power4.out", delay: 0.4 })
-          .to(group.rotation, { x: 0.2, y: -0.4, z: 0, duration: 2.5, ease: "power3.out" }, "-=2.2")
-          // Step 2: Camera slide down reveal
-          .to(camera.position, { z: 7, duration: 2, ease: "power2.inOut" }, "-=1.8")
-          // Step 3: Show UI text after logo settles
-          .call(() => {
-              document.getElementById('heroText').classList.add('visible');
-          });
+                </div>
 
-        // --- Interactive Mouse Parallax & Scroll Reaction ---
-        let mouseX = 0;
-        let mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
-            mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
-        });
+              </div>
 
-        // Scroll-based transformation
-        window.addEventListener('scroll', () => {
-            const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-            group.rotation.y = -0.4 + (scrollProgress * Math.PI * 2);
-            group.position.y = scrollProgress * 2;
-        });
+              <div class="absolute top-5 left-5 text-[8px] tracking-[.3em] text-white/25">
+                TECHNICAL VIEW
+              </div>
 
-        // Render Loop
-        const clock = new THREE.Clock();
-        function animate() {
-            requestAnimationFrame(animate);
+              <div class="absolute bottom-5 right-5 text-[8px] tracking-[.3em] text-white/25">
+                001 / 004
+              </div>
 
-            // Subtle floating idle motion
-            const elapsedTime = clock.getElapsedTime();
-            if(scrollProgress === 0) {
-                group.position.y = Math.sin(elapsedTime * 1.5) * 0.1;
-            }
+            </div>
 
-            // Smooth mouse parallax effect on group rotation
-            group.rotation.y += (mouseX - group.rotation.y) * 0.05;
-            group.rotation.x += (-mouseY - group.rotation.x) * 0.05;
+          </div>
 
-            renderer.render(scene, camera);
-        }
-        animate();
 
-        // Window Resizing
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+          <!-- FEATURES -->
+
+          <div>
+
+            <div class="mb-14">
+              <div class="text-[9px](window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
